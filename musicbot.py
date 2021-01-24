@@ -36,11 +36,20 @@ async def on_message(message):
             ctx = 'a b'
         if ctx == "hi":
             await message.channel.send(f'Merhaba {message.author.name}')
-
         if ctx == "clear":
             embed = discord.Embed(description="Mesajlar Siliniyor...", color=0x3498db)
             await message.channel.send(embed=embed)
             await message.channel.purge(limit=None)
+        if ctx == "help":
+            embed = discord.Embed(title="Yardım", description="**Bütün Kodlar**", color=0x3498db)
+            embed.add_field(name="!hi",value="Bot greet you")
+            embed.add_field(name="!clear",value="Delete messages on server\n")
+            embed.add_field(name="!play", value="Allows you to search for the song.You have to react to play the song\n", inline=False)
+            embed.add_field(name="\n\n!pause",value="\nPauses the song")
+            embed.add_field(name="!resume",value="Resume the song")
+            embed.add_field(name="!stop",value="Stop the song")
+            embed.add_field(name="!destroy",value="Bot exit voice channel\n")
+            await message.channel.send(embed=embed)
         if ctx.split()[0] == "play":
             if message.author.voice and message.author.voice.channel:
                 channel = message.author.voice.channel
@@ -49,18 +58,15 @@ async def on_message(message):
                 except ClientException:
                     pass
                 if ctx.find("play ") != -1:
-                    try:
-                        embed = discord.Embed(description="**Şarkı Aranıyor...**", color=0x00ff00)
-                        bot_message = await message.channel.send(embed=embed)
-                        search = ""
-                        for i in ctx.split()[1:]:
-                            search_word = ''.join(i)
-                            search += " " + search_word
-                        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-                            video = ydl.extract_info(f"ytsearch5:{search}", download=False)
-                        results = video['entries']
-                    except KeyError:
-                        results = ["title"]
+                    embed = discord.Embed(description="**Şarkı Aranıyor...**", color=0x00ff00)
+                    bot_message = await message.channel.send(embed=embed)
+                    search = ""
+                    for i in ctx.split()[1:]:
+                        search_word = ''.join(i)
+                        search += " " + search_word
+                    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+                        video = ydl.extract_info(f"ytsearch5:{search}", download=False)
+                    results = video['entries']
                     if results != [""]:
                         result = [i['title'] for i in results]
                         embed_result = ""
@@ -73,7 +79,6 @@ async def on_message(message):
                         await bot_message.add_reaction("3\uFE0F\u20E3")
                         await bot_message.add_reaction("4\uFE0F\u20E3")
                         await bot_message.add_reaction("5\uFE0F\u20E3")
-
                     def check(reaction, user):
                         return user == message.author and (str(reaction.emoji) == "1\uFE0F\u20E3" or str(
                             reaction.emoji) == "2\uFE0F\u20E3" or str(reaction.emoji) == "3\uFE0F\u20E3" or str(
