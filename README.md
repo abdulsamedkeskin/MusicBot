@@ -1,15 +1,15 @@
 # MusicBot
 To get to the server:   <https://discord.com/oauth2/authorize?client_id=781943833629294604&scope=bot&permissions=8>
 # Commands
-| Commands              | Description                                                                 |
-| -------------         |:-------------:                                                              |
-| play <song name>      | Allows you to search for the song.You have to react to play the song        |
-| hi                    | Bot greet you                                                               |  
-| pause                 | Pauses the song                                                             |
-| resume                | Resume the song                                                             |
-| stop                  | Stop the song                                                               |
-| destroy               | Bot exit voice channel                                                      |
-| clear                 | delete messages on server                                                   |  
+| Commands              | Description                                                                  |
+| -------------         |:-------------:                                                               |
+| !play <song name>      | Allows you to search for the song.You have to react to play the song        |
+| !hi                    | Bot greet you                                                               |  
+| !pause                 | Pauses the song                                                             |
+| !resume                | Resume the song                                                             |
+| !stop                  | Stop the song                                                               |
+| !destroy               | Bot exit voice channel                                                      |
+| !clear                 | delete messages on server                                                   |  
 
 # License
 MIT License
