@@ -19,4 +19,3 @@ typing-extensions==3.7.4.3
 urllib3==1.26.2
 yarl==1.6.3
 youtube-dl==2021.1.16
-youtube-search==1.1.1
