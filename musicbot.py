@@ -2,7 +2,7 @@ import discord
 from discord.errors import ClientException
 import youtube_dl
 from discord.utils import get
-from discord.ext import commands
+from discord.ext import commands,tasks
 import asyncio
 
 client = commands.Bot(command_prefix="!")
@@ -169,8 +169,17 @@ async def on_message(message):
             else:
                 embed = discord.Embed(description="Bir hata meydana geldi", color=0x00ff00)
                 await message.channel.send(embed=embed)
-
-
+        @tasks.loop(seconds=2.0)
+        async def check_voice():
+            voice = get(client.voice_clients, guild=message.guild)
+            try:
+                member_count = len(voice.members)
+            except:
+                member_count=[]
+            if member_count == 1:
+                await voice.disconnect()
+                return True
+        check_voice.start()
 token = "your token here"
 
 client.run(token)
