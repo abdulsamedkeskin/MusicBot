@@ -178,7 +178,6 @@ async def on_message(message):
                 member_count=[]
             if member_count == 1:
                 await voice.disconnect()
-                return True
         check_voice.start()
 token = "your token here"
 
