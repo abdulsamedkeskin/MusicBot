@@ -121,11 +121,11 @@ async def on_message(message):
                                               color=0x00ff00).set_thumbnail(url=results[4]['thumbnail'])
                         await message.channel.send(embed=embed)
                     voice = get(client.voice_clients, guild=message.guild)
-                    while voice.is_playing():
+                    while voice.is_playing() or voice.is_paused():
                         await asyncio.sleep(1)
                     else:
                         await asyncio.sleep(15)
-                        while voice.is_playing():
+                        while voice.is_playing() or voice.is_paused():
                             break
                         else:
                             await voice.disconnect()
