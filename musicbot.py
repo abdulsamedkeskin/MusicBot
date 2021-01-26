@@ -5,6 +5,7 @@ from discord.utils import get
 from discord.ext import commands, tasks
 import asyncio
 
+
 client = commands.Bot(command_prefix="!")
 
 
@@ -101,7 +102,7 @@ async def on_message(message):
                             or str(reaction.emoji) == "5\uFE0F\u20E3")
                     try:
                         reaction, user = await client.wait_for(
-                            'reaction_add', timeout=10.0, check=check)
+                            'reaction_add', timeout=4.0, check=check)
                     except asyncio.TimeoutError:
                         reaction = ""
                     selection_check = str(reaction)
@@ -267,6 +268,7 @@ async def on_message(message):
                 await voice.disconnect()
 
         check_voice.start()
+
 token = "your token here"
 
 client.run(token)
