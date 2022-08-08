@@ -6,7 +6,7 @@ To get to the server:   <https://discord.com/api/oauth2/authorize?client_id=7819
 | !commands                  | Will show all commands with their descriptions                                        |
 | !hi                    | Will say hi                                                                | 
 | !clear                 | Will delete all messages on channel                                                    | 
-| !play <song name>      | Play a song        |
+| !play (song_name)     | Play a song        |
 
 # License
 MIT License
