@@ -1,5 +1,5 @@
 # MusicBot
-To get to the server:   <https://discord.com/oauth2/authorize?client_id=781943833629294604&scope=bot&permissions=8>
+To get to the server:   <https://discord.com/api/oauth2/authorize?client_id=781943833629294604&permissions=8&scope=applications.commands%20bot>
 # Commands
 | Commands               | Description                                                                  |
 | -------------          |:-------------:                                                               |
