@@ -3,10 +3,10 @@ To get to the server:   <https://discord.com/api/oauth2/authorize?client_id=7819
 # Commands
 | Commands               | Description                                                                  |
 | -------------          |:-------------:                                                               |
-| !commands                  | will show all commands with their descriptions                                        |
-| !hi                    | Bot will say hi                                                                | 
-| !clear                 | delete messages on server                                                    | 
-| !play <song name>      | Allows you to search for the song.You have to react to play the song         |
+| !commands                  | Will show all commands with their descriptions                                        |
+| !hi                    | Will say hi                                                                | 
+| !clear                 | Will delete all messages on channel                                                    | 
+| !play <song name>      | Play a song        |
 
 # License
 MIT License
