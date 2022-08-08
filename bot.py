@@ -113,10 +113,9 @@ async def play(ctx, song_name: str):
 
 @bot.event
 async def on_voice_state_update(member, before, after):
-    voice = discord.utils.get(bot.voice_clients, guild=member.guild)
-    if voice:
-        if len(after.channel.members) == 1:
-            return await voice.disconnect()
+    voice_state = member.guild.voice_client
+    if voice_state and len(voice_state.channel.members) == 1:
+      return await voice_state.disconnect()
 
 @bot.bridge_command(description="Delete messages on server")
 async def clear(ctx):
