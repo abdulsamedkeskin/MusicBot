@@ -17,26 +17,30 @@ FFMPEG_OPTIONS = {
 class View(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.primary, emoji="⏯️")
     async def play_pause_button_callback(self, button, interaction):
-        voice = discord.utils.get(bot.voice_clients, guild=interaction.guild)
-        if voice.is_playing():
-            voice.pause()
-            embed = interaction.message.embeds[0].to_dict()
-            embed['title'] = "Şarkı Duraklatıldı"
-            embed = discord.Embed.from_dict(embed)
-            await interaction.response.edit_message(embed=embed)
-        elif voice.is_paused():
-            voice.resume()
-            embed = interaction.message.embeds[0].to_dict()
-            embed['title'] = "Şarkı Devam Ediyor"
-            embed = discord.Embed.from_dict(embed)
-            await interaction.response.edit_message(embed=embed)
+        if interaction.message.interaction.user == interaction.user:
+          voice = discord.utils.get(bot.voice_clients, guild=interaction.guild)
+          if voice.is_playing():
+              voice.pause()
+              embed = interaction.message.embeds[0].to_dict()
+              embed['title'] = "Şarkı Duraklatıldı"
+              embed = discord.Embed.from_dict(embed)
+              await interaction.response.edit_message(embed=embed)
+          elif voice.is_paused():
+              voice.resume()
+              embed = interaction.message.embeds[0].to_dict()
+              embed['title'] = "Şarkı Devam Ediyor"
+              embed = discord.Embed.from_dict(embed)
+              await interaction.response.edit_message(embed=embed)
+        else:
+          await interaction.response.send_message(content="Komutu kullanan kişi dışında butonları kullanamazsınız", ephemeral=True)
 
     @discord.ui.button(style=discord.ButtonStyle.danger, emoji="✖️")
     async def destroy_button_callback(self, button, interaction):
+      if interaction.message.interaction.user == interaction.user:
         voice = discord.utils.get(bot.voice_clients, guild=interaction.guild)
         await voice.disconnect()
-        embed=discord.Embed(title="Şarkı Kapatıldı",color=0x00ff00)
-        await interaction.response.edit_message(embed=embed)
+      else:
+        await interaction.response.send_message(content="Komutu kullanan kişi dışında butonları kullanamazsınız", ephemeral=True)
 
 
 @bot.event
