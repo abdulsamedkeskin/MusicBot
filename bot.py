@@ -103,9 +103,15 @@ async def on_voice_state_update(member, before, after):
 
 @bot.command(description="Delete messages on server")
 async def clear(ctx):
+    def check(m):
+      if m.author == bot.user:
+        if not m.components:
+          return True
+        return False
+      return True      
     embed = discord.Embed(description="Mesajlar Siliniyor...", color=0x3498db)
     await ctx.respond(embed=embed)
-    await ctx.channel.purge(limit=None)
+    await ctx.channel.purge(limit=None, check=check)
 
 token = os.getenv("TOKEN")
 bot.run(token)
