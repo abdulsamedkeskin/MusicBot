@@ -1,18 +1,23 @@
 import os
-import requests,asyncio,discord
+import asyncio,discord
 from discord.ext import bridge
+from PyYTMusic import PyYTMusic
+
+from keep_alive import keep_alive
+
+ytmusic = PyYTMusic()
+
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = bridge.Bot(command_prefix="!", intents=intents)
-
-api_url = "https://MusicStream.sametkeskin.repl.co/get-music"
-
+bot = bridge.Bot(command_prefix="!.<>", intents=intents)
 FFMPEG_OPTIONS = {
     'before_options':'-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn',
+    
 }
+
 
 class View(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.primary, emoji="⏯️")
@@ -24,7 +29,6 @@ class View(discord.ui.View):
             embed['title'] = "Şarkı Duraklatıldı"
             embed = discord.Embed.from_dict(embed)
             await interaction.response.edit_message(embed=embed)
-            
         elif voice.is_paused():
             voice.resume()
             embed = interaction.message.embeds[0].to_dict()
@@ -41,15 +45,19 @@ class View(discord.ui.View):
         embed = discord.Embed.from_dict(embed)
         await interaction.response.edit_message(embed=embed)
 
+
     @discord.ui.button(style=discord.ButtonStyle.danger, emoji="✖️")
     async def destroy_button_callback(self, button, interaction):
         voice = discord.utils.get(bot.voice_clients, guild=interaction.guild)
         await voice.disconnect()
-        await interaction.response.delete_message()
+        embed=discord.Embed(title="Şarkı Kapatıldı",color=0x00ff00)
+        await interaction.response.edit_message(embed=embed)
+
 
 @bot.event
 async def on_ready():
     print("Ready!")
+
 
 @bot.bridge_command(description="Show all available commands")
 async def commands(ctx):
@@ -88,19 +96,17 @@ async def play(ctx, song_name: str):
             embed = discord.Embed(title="Zaten başka bir odaya bağlıyım.",
                               color=0x3498db)
             return await ctx.respond(embed=embed)           
-    embed = embed = discord.Embed(title="🔎 Aranıyor",color=0x00ff00)
+    embed = discord.Embed(title="🔎 Aranıyor",color=0x00ff00)
     message = await ctx.respond(embed=embed)
-    data = {"query": song_name}
-    request = requests.post(api_url, json=data)
-    response = request.json()
+    results = ytmusic.search(song_name, ["songs", "videos"])['results'][0]
     channel = voice_state.channel
     embed = discord.Embed(title="Şu anda oynatılan şarkı",
-                        description=f"{response['title']}",
+                        description=f"{results['author']} - {results['name']}",
                         color=0x00ff00).set_thumbnail(
-                            url=response['thumbnail'])
+                            url=results['thumbnails'][0]['url'])
     vc = await channel.connect()
-    await message.edit_original_message(embed=embed, view=View())
-    vc.play(discord.FFmpegPCMAudio(**FFMPEG_OPTIONS,source=response['url']), after=lambda e: vc.disconnect())
+    await message.edit_original_message(embed=embed, view=View(timeout=None))
+    vc.play(discord.FFmpegPCMAudio(**FFMPEG_OPTIONS,source=results['playerUrl']), after=lambda e: vc.disconnect())
     while vc.is_playing():
         await asyncio.sleep(1)
     else:
