@@ -3,21 +3,18 @@ import asyncio,discord
 from discord.ext import bridge
 from PyYTMusic import PyYTMusic
 
-from keep_alive import keep_alive
-
 ytmusic = PyYTMusic()
-
 
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = bridge.Bot(command_prefix="!.<>", intents=intents)
+
 FFMPEG_OPTIONS = {
     'before_options':'-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
     'options': '-vn',
     
 }
-
 
 class View(discord.ui.View):
     @discord.ui.button(style=discord.ButtonStyle.primary, emoji="⏯️")
