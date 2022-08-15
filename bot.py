@@ -1,19 +1,18 @@
 import os
 import asyncio,discord
-from discord.ext import bridge
 from PyYTMusic import PyYTMusic
+from keep_alive import keep_alive
 
 ytmusic = PyYTMusic()
 
 intents = discord.Intents.default()
 intents.message_content = True
 
-bot = bridge.Bot(command_prefix="!.<>", intents=intents)
+bot = discord.Bot(intents=intents)
 
 FFMPEG_OPTIONS = {
     'before_options':'-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-    'options': '-vn',
-    
+    'options': '-vn',   
 }
 
 class View(discord.ui.View):
@@ -33,16 +32,6 @@ class View(discord.ui.View):
             embed = discord.Embed.from_dict(embed)
             await interaction.response.edit_message(embed=embed)
 
-    @discord.ui.button(style=discord.ButtonStyle.primary, emoji="⏹️")
-    async def stop_button_callback(self, button, interaction):
-        voice = discord.utils.get(bot.voice_clients, guild=interaction.guild)
-        voice.stop()
-        embed = interaction.message.embeds[0].to_dict()
-        embed['title'] = "Şarkı Durduruldu"
-        embed = discord.Embed.from_dict(embed)
-        await interaction.response.edit_message(embed=embed)
-
-
     @discord.ui.button(style=discord.ButtonStyle.danger, emoji="✖️")
     async def destroy_button_callback(self, button, interaction):
         voice = discord.utils.get(bot.voice_clients, guild=interaction.guild)
@@ -56,32 +45,25 @@ async def on_ready():
     print("Ready!")
 
 
-@bot.bridge_command(description="Show all available commands")
+@bot.command(description="Show all available commands")
 async def commands(ctx):
-    embed = discord.Embed(title="Yardım",
-                          description="**Bütün Kodlar**",
-                          color=0x3498db)
-    embed.add_field(name="!hi", value="Bot will say hi")
-    embed.add_field(name="!clear", value="Delete messages on server\n")
-    embed.add_field(
-        name="!play",
-        value=
-        "Allows you to search for the song.You have to react to play the song\n",
-        inline=False)
+    embed = discord.Embed(title="Yardım",description="**Bütün Kodlar**",color=0x3498db)
+    embed.add_field(name="/hi", value="Will say hi")
+    embed.add_field(name="/clear", value="Delete all messages on channel\n")
+    embed.add_field(name="/play song_name",value="Play a song\n",inline=False)
     await ctx.respond(embed=embed)
 
 
-@bot.bridge_command(description="Bot will say hi")
+@bot.command(description="Bot will say hi")
 async def hi(ctx):
     await ctx.respond(f"Hi <@{ctx.author.id}>")
 
 
-@bot.bridge_command(description="Play a song")
+@bot.command(description="Play a song")
 async def play(ctx, song_name: str):
     voice_state = ctx.author.voice
     if voice_state is None:
-        embed = discord.Embed(description="Ses kanalında değilsiniz",
-                              color=0x3498db)
+        embed = discord.Embed(description="Ses kanalında değilsiniz",color=0x3498db)
         return await ctx.respond(embed=embed)
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice and voice.is_connected():
@@ -90,8 +72,7 @@ async def play(ctx, song_name: str):
                 embed = discord.Embed(title="Şu anda zaten bir şarkı çalınıyor",color=0x00ff00)
                 return await ctx.respond(embed=embed)
         else:
-            embed = discord.Embed(title="Zaten başka bir odaya bağlıyım.",
-                              color=0x3498db)
+            embed = discord.Embed(title="Zaten başka bir odaya bağlıyım.",color=0x3498db)
             return await ctx.respond(embed=embed)           
     embed = discord.Embed(title="🔎 Aranıyor",color=0x00ff00)
     message = await ctx.respond(embed=embed)
@@ -103,16 +84,17 @@ async def play(ctx, song_name: str):
                             url=results['thumbnails'][0]['url'])
     vc = await channel.connect()
     await message.edit_original_message(embed=embed, view=View(timeout=None))
-    vc.play(discord.FFmpegPCMAudio(**FFMPEG_OPTIONS,source=results['playerUrl']), after=lambda e: vc.disconnect())
-    while vc.is_playing():
-        await asyncio.sleep(1)
-    else:
-        await asyncio.sleep(15)
-        while vc.is_playing():
-            break
-        else:
-            await vc.disconnect()
-            await message.delete_original_message()
+    def after_disconnect(error):
+      disconnect = vc.disconnect()
+      disconnect_await = asyncio.run_coroutine_threadsafe(disconnect, bot.loop)
+      delete = message.delete_original_message()
+      delete_await = asyncio.run_coroutine_threadsafe(delete, bot.loop)
+      try:
+        disconnect_await.result()
+        delete_await.result()
+      except:
+        pass
+    vc.play(discord.FFmpegPCMAudio(**FFMPEG_OPTIONS,source=results['playerUrl']), after=after_disconnect)
 
 @bot.event
 async def on_voice_state_update(member, before, after):
@@ -120,7 +102,7 @@ async def on_voice_state_update(member, before, after):
     if voice_state and len(voice_state.channel.members) == 1:
       return await voice_state.disconnect()
 
-@bot.bridge_command(description="Delete messages on server")
+@bot.command(description="Delete messages on server")
 async def clear(ctx):
     embed = discord.Embed(description="Mesajlar Siliniyor...", color=0x3498db)
     await ctx.respond(embed=embed)
