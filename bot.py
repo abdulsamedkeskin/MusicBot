@@ -1,7 +1,6 @@
 import os
 import asyncio,discord
 from PyYTMusic import PyYTMusic
-from keep_alive import keep_alive
 
 ytmusic = PyYTMusic()
 
