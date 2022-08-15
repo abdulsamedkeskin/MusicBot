@@ -70,13 +70,12 @@ async def play(ctx, song_name: str):
         return await ctx.respond(embed=embed)
     voice = discord.utils.get(bot.voice_clients, guild=ctx.guild)
     if voice and voice.is_connected():
-        if voice.is_playing():
-            if voice_state.channel.id == voice.channel.id:
-                embed = discord.Embed(title="Şu anda zaten bir şarkı çalınıyor",color=0x00ff00)
-                return await ctx.respond(embed=embed)
+        if voice_state.channel.id == voice.channel.id:
+            embed = discord.Embed(title="Şu anda zaten bir şarkı çalınıyor",color=0x00ff00)
+            return await ctx.respond(embed=embed)
         else:
             embed = discord.Embed(title="Zaten başka bir odaya bağlıyım.",color=0x3498db)
-            return await ctx.respond(embed=embed)           
+            return await ctx.respond(embed=embed)          
     embed = discord.Embed(title="🔎 Aranıyor",color=0x00ff00)
     message = await ctx.respond(embed=embed)
     results = ytmusic.search(song_name)['results'][0]
