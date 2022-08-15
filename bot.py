@@ -95,7 +95,7 @@ async def play(ctx, song_name: str):
             return await ctx.respond(embed=embed)           
     embed = discord.Embed(title="🔎 Aranıyor",color=0x00ff00)
     message = await ctx.respond(embed=embed)
-    results = ytmusic.search(song_name, ["songs", "videos"])['results'][0]
+    results = ytmusic.search(song_name)['results'][0]
     channel = voice_state.channel
     embed = discord.Embed(title="Şu anda oynatılan şarkı",
                         description=f"{results['author']} - {results['name']}",
