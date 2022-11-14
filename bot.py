@@ -7,7 +7,6 @@ intents = discord.Intents.default()
 intents.message_content = True
 
 bot = discord.Bot(intents=intents)
-application_id = os.getenv('application_id')
 
 FFMPEG_OPTIONS = {
     'before_options':'-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
