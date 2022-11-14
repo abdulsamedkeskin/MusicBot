@@ -125,6 +125,10 @@ async def clear(ctx):
     embed = discord.Embed(description="Deleting messages...", color=0x3498db)
     await ctx.respond(embed=embed)
     await ctx.channel.purge(limit=None, check=check)
+    
+@bot.command(description="bot server info")
+async def server_info(ctx):
+  await ctx.respond('\n'.join(guild.name for guild in bot.guilds))
 
 token = os.getenv("TOKEN")
 bot.run(token)
