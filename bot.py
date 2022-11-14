@@ -1,4 +1,4 @@
-import asyncio,discord
+import asyncio, discord, os
 from PyYTMusic import PyYTMusic
 
 ytmusic = PyYTMusic()
